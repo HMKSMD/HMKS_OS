@@ -75,8 +75,8 @@ rpm-ostree install \
 # ============================================================
 # SECTION 5: Brave Browser Nightly
 # ============================================================
-curl -fsSL https://brave-browser-rpm-nightly.s3.brave.com/brave-core-nightly.asc -o /tmp/brave-nightly.asc
-rpm --import /tmp/brave-nightly.asc
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
 cat > /etc/yum.repos.d/brave-browser-nightly.repo << 'EOF'
 [brave-browser-nightly]
 name=Brave Browser - Nightly
@@ -85,6 +85,7 @@ gpgcheck=1
 gpgkey=https://brave-browser-rpm-nightly.s3.brave.com/brave-core-nightly.asc
 baseurl=https://brave-browser-rpm-nightly.s3.brave.com/$basearch
 EOF
+rpm-ostree install brave-keyring
 rpm-ostree install brave-origin-nightly
 
 # ============================================================
