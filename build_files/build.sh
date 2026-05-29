@@ -229,6 +229,7 @@ cp /usr/share/doc/dunst/LICENSE /usr/share/licenses/dunst/ 2>/dev/null || true
 # SECTION 8: Enable Services
 # ============================================================
 systemctl enable sddm || true
+systemctl set-default graphical.target || true
 systemctl enable NetworkManager || true
 systemctl enable pipewire.socket || true
 systemctl enable pipewire.service || true
@@ -396,6 +397,81 @@ cat > /etc/sddm.conf.d/10-x11.conf << 'EOF'
 [General]
 DisplayServer=x11
 EOF
+
+mkdir -p /etc/sddm.conf.d
+cat > /etc/sddm.conf.d/20-theme.conf << 'EOF'
+[Theme]
+Current=fedora
+EOF
+
+mkdir -p /usr/share/sddm/themes/minimal
+cat > /usr/share/sddm/themes/minimal/theme.conf << 'THEME_EOF'
+[Theme]
+Name=minimal
+THEME_EOF
+
+cat > /usr/share/sddm/themes/minimal/Main.qml << 'QML_EOF'
+import QtQuick 2.0
+import SddmComponents 2.0
+
+Rectangle {
+    id: root
+    width: 1024
+    height: 768
+    color: "#2e3440"
+
+    Clock {
+        id: clock
+        anchors.top: parent.top
+        anchors.topMargin: parent.height * 0.35
+        anchors.horizontalCenter: parent.horizontalCenter
+        color: "#d8dee9"
+        font.pixelSize: 48
+    }
+
+    Column {
+        anchors.top: clock.bottom
+        anchors.topMargin: 30
+        anchors.horizontalCenter: parent.horizontalCenter
+        spacing: 10
+
+        TextBox {
+            id: nameBox
+            width: 220
+            height: 30
+            font.pixelSize: 13
+            text: userModel.lastUser || ""
+            focus: true
+            onAccepted: pwBox.focus = true
+        }
+
+        PasswordBox {
+            id: pwBox
+            width: 220
+            height: 30
+            font.pixelSize: 13
+        }
+
+        Button {
+            id: loginBtn
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: "Log In"
+            onClicked: sddm.login(nameBox.text, pwBox.text, 0)
+        }
+    }
+
+    Connections {
+        target: sddm
+        onLoginSucceeded: {}
+        onLoginFailed: { pwBox.text = "" }
+    }
+}
+QML_EOF
+
+cat > /etc/sddm.conf.d/20-theme.conf << 'THEME_CONF'
+[Theme]
+Current=minimal
+THEME_CONF
 
 mkdir -p /etc/X11/xinit/xinitrc.d
 cat > /etc/X11/xinit/xinitrc.d/99-oxwm.sh << 'EOF'
