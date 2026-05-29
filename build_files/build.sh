@@ -97,8 +97,16 @@ DesktopNames=OXWM
 EOF
 
 mkdir -p /etc/skel/.config/oxwm
-cp templates/config.lua /etc/skel/.config/oxwm/ 2>/dev/null || echo "No default config template found"
-cp LICENSE /usr/share/licenses/oxwm/ 2>/dev/null || echo "No LICENSE file found"
+if [ -f templates/config.lua ]; then
+    cp templates/config.lua /etc/skel/.config/oxwm/
+else
+    cat > /etc/skel/.config/oxwm/config.lua << 'CFGEOF'
+-- oxwm default config
+terminal = "alacritty"
+modkey = "Mod4"
+CFGEOF
+fi
+cp LICENSE /usr/share/licenses/oxwm/ 2>/dev/null || true
 
 cd /
 rm -rf "$WORKDIR"
@@ -213,9 +221,21 @@ systemctl enable udisks2
 mkdir -p /etc/systemd/user/default.target.wants
 ln -s /usr/lib/systemd/user/dunst.service /etc/systemd/user/default.target.wants/dunst.service || true
 
-systemctl enable brew-setup.service
-systemctl enable brew-update.timer
-systemctl enable brew-upgrade.timer
+# ============================================================
+# SECTION 7.5: Install Homebrew
+# ============================================================
+mkdir -p /home/linuxbrew/.linuxbrew
+NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || true
+
+mkdir -p /etc/profile.d
+cat > /etc/profile.d/brew.sh << 'BREWEOF'
+# Homebrew setup
+if [ -d /home/linuxbrew/.linuxbrew ]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+elif [ -d ~/.linuxbrew ]; then
+    eval "$(~/.linuxbrew/bin/brew shellenv)"
+fi
+BREWEOF
 
 # ============================================================
 # SECTION 8: Custom ujust Recipes
@@ -303,8 +323,10 @@ update-all:
     rpm-ostree upgrade
     echo "Updating flatpaks..."
     flatpak update -y
-    echo "Updating homebrew..."
-    brew update && brew upgrade
+    if command -v brew &>/dev/null; then
+        echo "Updating homebrew..."
+        brew update && brew upgrade
+    fi
 
 image-info:
     #!/usr/bin/bash
