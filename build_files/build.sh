@@ -87,7 +87,8 @@ gpgkey=https://brave-browser-rpm-nightly.s3.brave.com/brave-core-nightly.asc
 baseurl=https://brave-browser-rpm-nightly.s3.brave.com/$basearch
 EOF
 rpm-ostree install brave-keyring
-rpm-ostree install brave-origin-nightly
+dnf --repo brave-browser-nightly download --destdir=/tmp brave-origin-nightly 2>/dev/null || true
+rpm -Uvh --noscripts /tmp/brave-origin-nightly-*.x86_64.rpm 2>/dev/null || true
 
 # ============================================================
 # SECTION 6: Build OXWM from Source
