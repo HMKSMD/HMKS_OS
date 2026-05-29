@@ -10,7 +10,8 @@ rpm-ostree install \
     wget \
     unzip \
     tar \
-    zstd
+    zstd \
+    fish
 
 # ============================================================
 # SECTION 2: X11 & Display Stack
