@@ -70,7 +70,8 @@ rpm-ostree install \
     xdg-desktop-portal-gtk \
     xsettingsd \
     udisks2 \
-    rofi
+    rofi \
+    xdg-utils
 
 # ============================================================
 # SECTION 5: Brave Browser Nightly
