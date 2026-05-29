@@ -210,13 +210,13 @@ cp /usr/share/doc/dunst/LICENSE /usr/share/licenses/dunst/ 2>/dev/null || true
 # ============================================================
 # SECTION 7: Enable Services
 # ============================================================
-systemctl enable sddm
-systemctl enable NetworkManager
-systemctl enable pipewire.socket
-systemctl enable pipewire.service
-systemctl enable wireplumber.service
-systemctl enable polkit
-systemctl enable udisks2
+systemctl enable sddm || true
+systemctl enable NetworkManager || true
+systemctl enable pipewire.socket || true
+systemctl enable pipewire.service || true
+systemctl enable wireplumber.service || true
+systemctl enable polkit || true
+systemctl enable udisks2 || true
 
 mkdir -p /etc/systemd/user/default.target.wants
 ln -s /usr/lib/systemd/user/dunst.service /etc/systemd/user/default.target.wants/dunst.service || true
