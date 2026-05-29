@@ -69,7 +69,8 @@ rpm-ostree install \
     xdg-desktop-portal \
     xdg-desktop-portal-gtk \
     xsettingsd \
-    udisks2
+    udisks2 \
+    rofi
 
 # ============================================================
 # SECTION 5: Build OXWM from Source
@@ -157,7 +158,7 @@ cat > /etc/skel/.config/dunst/dunstrc << 'EOF'
     enable_recursive_icon_lookup = true
     sticky_history = yes
     history_length = 20
-    dmenu = /usr/bin/wofi --dmenu
+    dmenu = /usr/bin/rofi -dmenu
     browser = /usr/bin/xdg-open
     always_run_script = true
     title = Dunst
