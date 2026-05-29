@@ -82,7 +82,7 @@ cd "$WORKDIR"
 git clone --depth 1 https://github.com/tonybanters/oxwm.git
 cd oxwm
 
-zig build -Doptimize=ReleaseSmall
+ZIG_GLOBAL_CACHE_DIR=/tmp/zig-cache zig build -Doptimize=ReleaseSmall
 
 install -Dm755 zig-out/bin/oxwm /usr/bin/oxwm
 
