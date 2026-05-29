@@ -73,7 +73,22 @@ rpm-ostree install \
     rofi
 
 # ============================================================
-# SECTION 5: Build OXWM from Source
+# SECTION 5: Brave Browser Nightly
+# ============================================================
+curl -fsSL https://brave-browser-rpm-nightly.s3.brave.com/brave-core-nightly.asc -o /tmp/brave-nightly.asc
+rpm --import /tmp/brave-nightly.asc
+cat > /etc/yum.repos.d/brave-browser-nightly.repo << 'EOF'
+[brave-browser-nightly]
+name=Brave Browser - Nightly
+enabled=1
+gpgcheck=1
+gpgkey=https://brave-browser-rpm-nightly.s3.brave.com/brave-core-nightly.asc
+baseurl=https://brave-browser-rpm-nightly.s3.brave.com/$basearch
+EOF
+rpm-ostree install brave-origin-nightly
+
+# ============================================================
+# SECTION 6: Build OXWM from Source
 # ============================================================
 WORKDIR="/tmp/oxwm-build"
 mkdir -p "$WORKDIR"
@@ -112,7 +127,7 @@ cd /
 rm -rf "$WORKDIR"
 
 # ============================================================
-# SECTION 6: Dunst Configuration
+# SECTION 7: Dunst Configuration
 # ============================================================
 mkdir -p /etc/skel/.config/dunst
 
@@ -208,7 +223,7 @@ mkdir -p /usr/share/licenses/dunst
 cp /usr/share/doc/dunst/LICENSE /usr/share/licenses/dunst/ 2>/dev/null || true
 
 # ============================================================
-# SECTION 7: Enable Services
+# SECTION 8: Enable Services
 # ============================================================
 systemctl enable sddm || true
 systemctl enable NetworkManager || true
@@ -222,9 +237,9 @@ mkdir -p /etc/systemd/user/default.target.wants
 ln -s /usr/lib/systemd/user/dunst.service /etc/systemd/user/default.target.wants/dunst.service || true
 
 # ============================================================
-# SECTION 7.5: Install Homebrew
+# SECTION 9: Install Homebrew
 # ============================================================
-mkdir -p /home/linuxbrew/.linuxbrew
+mkdir -p /home/linuxbrew/.linuxbrew 2>/dev/null || true
 NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || true
 
 mkdir -p /etc/profile.d
@@ -238,7 +253,7 @@ fi
 BREWEOF
 
 # ============================================================
-# SECTION 8: Custom ujust Recipes
+# SECTION 10: Custom ujust Recipes
 # ============================================================
 mkdir -p /usr/share/ublue-os/just
 
@@ -352,7 +367,7 @@ mount-info:
 EOF
 
 # ============================================================
-# SECTION 9: Auto-Update Configuration
+# SECTION 11: Auto-Update Configuration
 # ============================================================
 mkdir -p /etc/xdg/topgrade
 cat > /etc/xdg/topgrade/topgrade.toml << 'EOF'
@@ -371,7 +386,7 @@ rpm_ostree = true
 EOF
 
 # ============================================================
-# SECTION 10: X11 Session Configuration
+# SECTION 12: X11 Session Configuration
 # ============================================================
 mkdir -p /etc/sddm.conf.d
 cat > /etc/sddm.conf.d/10-x11.conf << 'EOF'
@@ -402,7 +417,7 @@ EOF
 chmod +x /etc/X11/xinit/xinitrc.d/99-oxwm.sh
 
 # ============================================================
-# SECTION 11: Cleanup
+# SECTION 13: Cleanup
 # ============================================================
 rm -rf /var/cache/rpm-ostree
 rm -rf /tmp/*
