@@ -20,7 +20,6 @@ rpm-ostree install \
     xorg-x11-drivers \
     xorg-x11-xauth \
     xorg-x11-xinit \
-    xorg-x11-utils \
     xclip \
     xset \
     xrdb \
